@@ -1,0 +1,34 @@
+image: php:8.0.12-cli
+
+stages:
+  - prepare
+  - build
+
+cache:
+  paths:
+    -  backend/app/vendor/
+
+frontend-prep:
+  stage: prepare
+  image: node:latest
+  script:
+    - cd frontend
+    - npm install -i
+    - npm install --global expo-cli 
+    - expo install
+
+backend:
+  stage: prepare
+  image: lorisleiva/laravel-docker:8.0
+  cache:
+    paths:
+      - backend/app/vendor/
+  script:
+    - cd backend/app
+    - composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
+    - cp .env.example .env
+    - php artisan key:generate
+  artifacts:
+    expire_in: 1 month
+    paths:
+      - backend/app/.env 

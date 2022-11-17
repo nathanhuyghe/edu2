@@ -1,0 +1,11 @@
+De aanwezigheid van grafieken over de statistieken van een student zijn stage + een badgesysteem als gamify element.
+react-native-svg library. 
+
+Notificaties (over aanvraag van feedback of vernieuwde feedback) worden realtime verzonden tussen backend en frontend dmv websockets 
+Via pusher en laravel broadcast)
+
+Inviteren van  mentor door leerling aan de hand van QR-code gecreëerd door leerling. Zo wordt mentor direct
+gekoppeld aan specifieke stage.
+
+
+

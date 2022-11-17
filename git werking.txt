@@ -1,0 +1,17 @@
+GIT WERKING 
+
+2 main branches
+
+-Main (wat gehost wordt)
+-Development (test branch)
+
+branches per feature onder namespace /feature
+
+bv: 
+Ik wil statistiek toevoegen:
+- maak een branch /feature/statistiek
+- schrijf testen + functionaliteit
+- doe een merge request naar Development (auto test via pipeline + testing)
+- Code review door medestudent
+- Merge naar master
+

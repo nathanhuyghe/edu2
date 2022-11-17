@@ -1,0 +1,10 @@
+php artisan make:controller PhotoController --api
+
+php artisan make:resource ProductResource
+
+php artisan db:seed
+
+nested example:
+https://laraveldaily.com/nested-resource-controllers-and-routes-laravel-crud-example/
+
+https://stackoverflow.com/questions/63203144/file-could-not-be-opened-in-append-mode-failed-to-open-stream-permission-denie

@@ -1,0 +1,131 @@
+import React from "react";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  RefreshControl,
+  Dimensions,
+  ToastAndroid,
+} from "react-native";
+import { IconButton, FAB, DefaultTheme, RadioButton, } from "react-native-paper";
+import TaskListItem from "../../components/taskListItem";
+import FilterModal from "../../components/filterModal";
+import axios from "axios";
+import { useEffect } from "react";
+axios.defaults.withCredentials = true;
+
+const Tasks = ({ route, navigation }) => {
+  const { id } = route.params;
+  navigation.setOptions({
+    headerLeft: () => (
+      <View style={{ paddingLeft: 5 }}>
+        <IconButton
+          icon={"arrow-left"}
+          color={"#000"}
+          onPress={() => navigation.goBack()}
+          rippleColor="rgba(0, 0, 0, .16)"
+        />
+      </View>
+    ),
+    headerRight: () => (
+      <View
+        style={{
+          flexDirection: "row",
+        }}
+      >
+        <IconButton
+          icon={"filter-variant"}
+          onPress={() => {
+            setShowFilter(true);
+            console.log(showFilter);
+          }}
+          title="Info"
+          color="#000"
+          rippleColor="rgba(0, 0, 0, .16)"
+        />
+        <IconButton
+          icon={"refresh"}
+          onPress={getTasks}
+          title="Info"
+          color="#000"
+          rippleColor="rgba(0, 0, 0, .16)"
+        />
+      </View>
+    ),
+  });
+
+  const [showFilter, setShowFilter] = React.useState(false);
+  const [filter, setFilter] = React.useState('Date');
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [tasks, setTasks] = React.useState([]);
+
+  const getTasks = async () => {
+    setRefreshing(true);
+    axios.get("https://edu2-8cd5y.ondigitalocean.app/api/user/" + global.user.id + "/tasks/")
+      .then(response => {
+        console.log(response.data);
+        setTasks(response.data.reverse());
+        setRefreshing(false);
+      })
+      .catch(error => {
+        ToastAndroid.showWithGravity(
+          error.response.data.message,
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        );
+        setRefreshing(false);
+      }
+      );
+  };
+
+  React.useEffect(() => {
+    console.log(id);
+    getTasks();
+  }, []);
+
+  return (
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      
+      <FilterModal 
+        options={['Alphabetical', 'Date', 'Reverse alphabetical']} 
+        initialSelected={1}
+        onChangeValue={val => setFilter(val)}
+        showFilter={showFilter}
+        onRequestClose={() => setShowFilter(false)}
+      />
+
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            onRefresh={getTasks}
+            refreshing={refreshing}
+            colors={["#7EAB92"]}
+          />
+        }
+      >
+        {
+          tasks
+          ?.filter(x => x.stopped_at != null && x.internship_id == id)
+          .sort((x, y) => {
+            if(filter == 'Alphabetical')
+              return x.title.localeCompare(y.title)
+            else if (filter == 'Reverse alphabetical')
+              return -(x.title.localeCompare(y.title))
+            else if(filter == 'Date')
+              return new Date(x.deadline) > new Date(y.deadline) ? -1 : new Date(x.deadline) < new Date(y.deadline) ? 1 : 0
+          })
+          .map((task) => 
+            <TaskListItem
+              task={task}
+              navigation={navigation}
+            />
+          )
+        }
+      </ScrollView>
+    </View>
+  );
+};
+
+export default Tasks;
